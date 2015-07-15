@@ -87,162 +87,170 @@ return /******/ (function(modules) { // webpackBootstrap
 	  UP: 38
 	};
 
-	jlTetherDire = function() {
-	  return {
-	    restrict: 'A',
-	    link: function(scope, element, attrs, cntrs) {
-	      var evaledOptions, jlTetherController, key, optionKey, strippedKey, targetElement, tetherHandle, tetherOptions, value;
-	      jlTetherController = cntrs;
-	      tetherOptions = {
-	        classPrefix: 'drop'
-	      };
-	      for (key in attrs) {
-	        if (!hasProp.call(attrs, key)) continue;
-	        value = attrs[key];
-	        if (key !== prefix && (key.indexOf(prefix)) !== -1) {
-	          strippedKey = key.replace(prefix, '');
-	          optionKey = strippedKey[0].toLowerCase() + strippedKey.slice(1);
-	          if (indexOf.call(optionsToEval, optionKey) >= 0) {
-	            tetherOptions[optionKey] = scope.$eval(value);
-	          } else {
-	            tetherOptions[optionKey] = value;
-	          }
-	        }
-	      }
-	      if (tetherOptions.options != null) {
-	        evaledOptions = (scope.$eval(tetherOptions.options)) || {};
-	        delete tetherOptions.options;
-	        for (key in evaledOptions) {
-	          if (!hasProp.call(evaledOptions, key)) continue;
-	          value = evaledOptions[key];
-	          tetherOptions[key] = value;
-	        }
-	      }
-	      targetElement = angular.element(tetherOptions.target);
-	      jlTetherController.targetElement = targetElement;
-	      element.on('click.' + prefix, (function(_this) {
-	        return function() {
-	          return jlTetherController.close();
+	jlTetherDire = [
+	  '$timeout', function($timeout) {
+	    return {
+	      restrict: 'A',
+	      link: function(scope, element, attrs, cntrs) {
+	        var evaledOptions, jlTetherController, key, optionKey, strippedKey, targetElement, tetherOptions, value;
+	        jlTetherController = cntrs;
+	        tetherOptions = {
+	          classPrefix: 'drop'
 	        };
-	      })(this));
-	      targetElement.on('click.' + prefix, (function(_this) {
-	        return function() {
-	          return jlTetherController.open();
-	        };
-	      })(this));
-	      targetElement.on('keyup.' + prefix, (function(_this) {
-	        return function(e) {
-	          jlTetherController.open();
-	          switch (e.which) {
-	            case KEY.ESC:
-	              return jlTetherController.close();
-	            case KEY.DOWN:
-	              return jlTetherController.next();
-	            case KEY.UP:
-	              return jlTetherController.prev();
-	            case KEY.ENTER:
-	              return jlTetherController.onSselectOption();
-	          }
-	        };
-	      })(this));
-	      angular.element(document).on('click.' + prefix, (function(_this) {
-	        return function(e) {
-	          if (e.target !== targetElement[0]) {
-	            return jlTetherController.close();
-	          }
-	        };
-	      })(this));
-	      scope.$on('$destroy', function() {
-	        jlTetherController.close();
-	        targetElement.off(prefix);
-	        angular.element(document).off(prefix);
-	        return tetherHandle.destroy();
-	      });
-	      if (tetherOptions.element == null) {
-	        tetherOptions.element = element[0];
-	      }
-	      tetherHandle = new Tether(tetherOptions);
-	      tetherHandle.position();
-	      if (attrs[prefix] != null) {
-	        return scope[attrs[prefix]] = tetherHandle;
-	      }
-	    },
-	    controller: [
-	      '$element', function(element) {
-	        var currentIndex, normalizeIndex, options;
-	        options = [];
-	        currentIndex = -1;
-	        this.next = function() {
-	          var ref, ref1;
-	          if ((ref = options[currentIndex]) != null) {
-	            ref.unSelect();
-	          }
-	          currentIndex++;
-	          normalizeIndex();
-	          return (ref1 = options[currentIndex]) != null ? ref1.select() : void 0;
-	        };
-	        this.prev = function() {
-	          var ref, ref1;
-	          if ((ref = options[currentIndex]) != null) {
-	            ref.unSelect();
-	          }
-	          currentIndex--;
-	          normalizeIndex();
-	          return (ref1 = options[currentIndex]) != null ? ref1.select() : void 0;
-	        };
-	        this.getSelectedOption = function() {
-	          var ref;
-	          return (ref = options[currentIndex]) != null ? ref.getOption() : void 0;
-	        };
-	        this.addOption = function(o) {
-	          return options.push(o);
-	        };
-	        this.removeOption = function(o) {
-	          var index;
-	          index = options.indexOf(o);
-	          if (index > -1) {
-	            return options.splice(index, 1);
-	          }
-	        };
-	        this.selectOption = function(o) {
-	          var ref, ref1;
-	          if ((ref = options[currentIndex]) != null) {
-	            ref.unSelect();
-	          }
-	          currentIndex = options.indexOf(o);
-	          if ((ref1 = options[currentIndex]) != null) {
-	            ref1.select();
-	          }
-	          return this.onSselectOption();
-	        };
-	        this.onSselectOption = function() {
-	          var selectedOption;
-	          selectedOption = this.getSelectedOption();
-	          if (selectedOption) {
-	            this.targetElement.val(selectedOption.name || selectedOption.label || selectedOption.id || selectedOption.value || selectedOption.toString());
-	            return this.close();
-	          }
-	        };
-	        normalizeIndex = (function(_this) {
-	          return function() {
-	            if (currentIndex >= options.length) {
-	              currentIndex = 0;
+	        for (key in attrs) {
+	          if (!hasProp.call(attrs, key)) continue;
+	          value = attrs[key];
+	          if (key !== prefix && (key.indexOf(prefix)) !== -1) {
+	            strippedKey = key.replace(prefix, '');
+	            optionKey = strippedKey[0].toLowerCase() + strippedKey.slice(1);
+	            if (indexOf.call(optionsToEval, optionKey) >= 0) {
+	              tetherOptions[optionKey] = scope.$eval(value);
+	            } else {
+	              tetherOptions[optionKey] = value;
 	            }
-	            if (currentIndex < 0) {
-	              return currentIndex = options.length - 1;
+	          }
+	        }
+	        if (tetherOptions.options != null) {
+	          evaledOptions = (scope.$eval(tetherOptions.options)) || {};
+	          delete tetherOptions.options;
+	          for (key in evaledOptions) {
+	            if (!hasProp.call(evaledOptions, key)) continue;
+	            value = evaledOptions[key];
+	            tetherOptions[key] = value;
+	          }
+	        }
+	        targetElement = angular.element(tetherOptions.target);
+	        jlTetherController.targetElement = targetElement;
+	        element.on('click.' + prefix, (function(_this) {
+	          return function() {
+	            return jlTetherController.close();
+	          };
+	        })(this));
+	        targetElement.on('click.' + prefix, (function(_this) {
+	          return function() {
+	            return jlTetherController.open();
+	          };
+	        })(this));
+	        targetElement.on('keyup.' + prefix, (function(_this) {
+	          return function(e) {
+	            jlTetherController.open();
+	            switch (e.which) {
+	              case KEY.ESC:
+	                return jlTetherController.close();
+	              case KEY.DOWN:
+	                return jlTetherController.next();
+	              case KEY.UP:
+	                return jlTetherController.prev();
+	              case KEY.ENTER:
+	                return jlTetherController.onSselectOption();
 	            }
 	          };
-	        })(this);
-	        this.close = function() {
-	          return element.removeClass('drop-open');
-	        };
-	        return this.open = function() {
-	          return element.addClass('drop-open');
-	        };
-	      }
-	    ]
-	  };
-	};
+	        })(this));
+	        angular.element(document).on('click.' + prefix, (function(_this) {
+	          return function(e) {
+	            if (e.target !== targetElement[0]) {
+	              return jlTetherController.close();
+	            }
+	          };
+	        })(this));
+	        scope.$on('$destroy', function() {
+	          jlTetherController.close();
+	          targetElement.off(prefix);
+	          angular.element(document).off(prefix);
+	          return tetherHandle.destroy();
+	        });
+	        if (tetherOptions.element == null) {
+	          tetherOptions.element = element[0];
+	        }
+	        return $timeout(function() {
+	          var tetherHandle;
+	          tetherHandle = new Tether(tetherOptions);
+	          tetherHandle.position();
+	          if (attrs[prefix] != null) {
+	            return scope[attrs[prefix]] = tetherHandle;
+	          }
+	        }, 0);
+	      },
+	      controller: [
+	        '$element', function(element) {
+	          var currentIndex, normalizeIndex, options;
+	          options = [];
+	          currentIndex = -1;
+	          this.next = function() {
+	            var ref, ref1;
+	            if ((ref = options[currentIndex]) != null) {
+	              ref.unSelect();
+	            }
+	            currentIndex++;
+	            normalizeIndex();
+	            return (ref1 = options[currentIndex]) != null ? ref1.select() : void 0;
+	          };
+	          this.prev = function() {
+	            var ref, ref1;
+	            if ((ref = options[currentIndex]) != null) {
+	              ref.unSelect();
+	            }
+	            currentIndex--;
+	            normalizeIndex();
+	            return (ref1 = options[currentIndex]) != null ? ref1.select() : void 0;
+	          };
+	          this.getSelectedOption = function() {
+	            var ref;
+	            return (ref = options[currentIndex]) != null ? ref.getOption() : void 0;
+	          };
+	          this.addOption = function(o) {
+	            return options.push(o);
+	          };
+	          this.removeOption = function(o) {
+	            var index;
+	            index = options.indexOf(o);
+	            if (index > -1) {
+	              return options.splice(index, 1);
+	            }
+	          };
+	          this.selectOption = function(o) {
+	            var ref, ref1;
+	            if ((ref = options[currentIndex]) != null) {
+	              ref.unSelect();
+	            }
+	            currentIndex = options.indexOf(o);
+	            if ((ref1 = options[currentIndex]) != null) {
+	              ref1.select();
+	            }
+	            return this.onSselectOption();
+	          };
+	          this.onSselectOption = function() {
+	            var ref, selectedOption;
+	            selectedOption = this.getSelectedOption();
+	            if (selectedOption) {
+	              this.targetElement.val(selectedOption.name || selectedOption.label || selectedOption.id || selectedOption.value || selectedOption.toString());
+	              if ((ref = options[currentIndex]) != null) {
+	                ref.onSelect(selectedOption);
+	              }
+	              return this.close();
+	            }
+	          };
+	          normalizeIndex = (function(_this) {
+	            return function() {
+	              if (currentIndex >= options.length) {
+	                currentIndex = 0;
+	              }
+	              if (currentIndex < 0) {
+	                return currentIndex = options.length - 1;
+	              }
+	            };
+	          })(this);
+	          this.close = function() {
+	            return element.removeClass('drop-open');
+	          };
+	          return this.open = function() {
+	            return element.addClass('drop-open');
+	          };
+	        }
+	      ]
+	    };
+	  }
+	];
 
 	module.exports = angular.module('jlTether', []).directive(prefix, jlTetherDire).directive(prefix + 'Option', function() {
 	  return TetherOption;
@@ -1717,8 +1725,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	      this.unSelect = function() {
 	        return $element.removeClass(cssClass);
 	      };
-	      return this.getOption = function() {
+	      this.getOption = function() {
 	        return $parse($attrs.jlTetherOption)($scope);
+	      };
+	      return this.onSelect = function() {
+	        return $parse($attrs.jlTetherOnSelect || $attrs.ngClick)($scope);
 	      };
 	    }
 	  ],

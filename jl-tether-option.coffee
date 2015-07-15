@@ -12,6 +12,8 @@ module.exports = {
         @getOption = ()->
             $parse($attrs.jlTetherOption)($scope)
 
+        @onSelect = ()->
+            $parse($attrs.jlTetherOnSelect || $attrs.ngClick)($scope)
 
     ]
     link: (scope, element, attrs, cntrs) ->

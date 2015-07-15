@@ -17,7 +17,7 @@ KEY = {
     UP: 38
 };
 
-jlTetherDire = () ->
+jlTetherDire = ['$timeout', ($timeout) ->
     restrict: 'A'
     link: (scope, element, attrs, cntrs) ->
         jlTetherController = cntrs
@@ -75,13 +75,16 @@ jlTetherDire = () ->
         if not tetherOptions.element?
             tetherOptions.element = element[0]
 
-        tetherHandle = new Tether tetherOptions
+        $timeout () ->
+            tetherHandle = new Tether tetherOptions
+            tetherHandle.position() # initial reposition
 
-        tetherHandle.position() # initial reposition
+            # hsTether attribute exists, fill it with the Tether object
+            if attrs[prefix]?
+                scope[attrs[prefix]] = tetherHandle
+        , 0
 
-        # hsTether attribute exists, fill it with the Tether object
-        if attrs[prefix]?
-            scope[attrs[prefix]] = tetherHandle
+
 
     controller: ['$element',(element)->
         options = [];
@@ -124,6 +127,7 @@ jlTetherDire = () ->
             selectedOption = @getSelectedOption()
             if (selectedOption)
                 @targetElement.val selectedOption.name || selectedOption.label || selectedOption.id || selectedOption.value || selectedOption.toString()
+                options[currentIndex]?.onSelect(selectedOption)
                 @close()
 
         normalizeIndex = ()=>
@@ -139,6 +143,7 @@ jlTetherDire = () ->
         @open = () ->
             element.addClass('drop-open')
     ]
+]
 
 module.exports = angular.module 'jlTether', []
 .directive prefix, jlTetherDire
