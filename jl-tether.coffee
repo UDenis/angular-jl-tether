@@ -68,7 +68,7 @@ jlTetherDire = ['$timeout', ($timeout) ->
             jlTetherController.close()
             targetElement.off(prefix)
             angular.element(document).off(prefix)
-            tetherHandle.destroy()
+            tetherHandle?.destroy()
 
 
         # the default element will be element[0]
