@@ -24,6 +24,6 @@ module.exports = {
 
         scope.$on '$destroy', () =>
             cntrs[0].removeOption(cntrs[1])
-            element.on('jlTetherOption')
+            element.off('jlTetherOption')
 
 }
