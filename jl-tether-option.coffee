@@ -3,7 +3,7 @@ cssClass = 'highlight'
 module.exports = {
     restrict: 'A'
     require: ['^jlTether', 'jlTetherOption']
-    controller:['$scope','$element','$attrs', '$parse', ($scope, $element, $attrs, $parse)->
+    controller:['$scope','$element','$attrs', '$parse', '$timeout', ($scope, $element, $attrs, $parse, $timeout)->
         @select = () ->
             $element.addClass(cssClass)
         @unSelect = ()->
@@ -13,7 +13,9 @@ module.exports = {
             $parse($attrs.jlTetherOption)($scope)
 
         @onSelect = ()->
-            $parse($attrs.jlTetherOnSelect || $attrs.ngClick)($scope)
+            $timeout =>
+                $parse($attrs.jlTetherOnSelect || $attrs.ngClick)($scope)
+            , 0
 
     ]
     link: (scope, element, attrs, cntrs) ->
