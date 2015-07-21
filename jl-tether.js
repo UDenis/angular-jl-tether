@@ -157,7 +157,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	          jlTetherController.close();
 	          targetElement.off(prefix);
 	          angular.element(document).off(prefix);
-	          return tetherHandle.destroy();
+	          return typeof tetherHandle !== "undefined" && tetherHandle !== null ? tetherHandle.destroy() : void 0;
 	        });
 	        if (tetherOptions.element == null) {
 	          tetherOptions.element = element[0];
@@ -1718,7 +1718,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  restrict: 'A',
 	  require: ['^jlTether', 'jlTetherOption'],
 	  controller: [
-	    '$scope', '$element', '$attrs', '$parse', function($scope, $element, $attrs, $parse) {
+	    '$scope', '$element', '$attrs', '$parse', '$timeout', function($scope, $element, $attrs, $parse, $timeout) {
 	      this.select = function() {
 	        return $element.addClass(cssClass);
 	      };
@@ -1729,7 +1729,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return $parse($attrs.jlTetherOption)($scope);
 	      };
 	      return this.onSelect = function() {
-	        return $parse($attrs.jlTetherOnSelect || $attrs.ngClick)($scope);
+	        return $timeout((function(_this) {
+	          return function() {
+	            return $parse($attrs.jlTetherOnSelect || $attrs.ngClick)($scope);
+	          };
+	        })(this), 0);
 	      };
 	    }
 	  ],
@@ -1743,7 +1747,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return scope.$on('$destroy', (function(_this) {
 	      return function() {
 	        cntrs[0].removeOption(cntrs[1]);
-	        return element.on('jlTetherOption');
+	        return element.off('jlTetherOption');
 	      };
 	    })(this));
 	  }
