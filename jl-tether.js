@@ -131,7 +131,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            return jlTetherController.open();
 	          };
 	        })(this));
-	        targetElement.on('keyup.' + prefix, (function(_this) {
+	        targetElement.on('keydown.' + prefix, (function(_this) {
 	          return function(e) {
 	            jlTetherController.open();
 	            switch (e.which) {

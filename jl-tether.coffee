@@ -52,7 +52,7 @@ jlTetherDire = ['$timeout', ($timeout) ->
         targetElement.on 'click.' + prefix, ()=>
             jlTetherController.open()
 
-        targetElement.on 'keyup.' + prefix, (e)=>
+        targetElement.on 'keydown.' + prefix, (e)=>
             jlTetherController.open()
             switch e.which
                 when KEY.ESC then jlTetherController.close()
