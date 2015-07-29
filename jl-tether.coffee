@@ -6,7 +6,7 @@ Tether = require 'tether'
 TetherOption = require './jl-tether-option.coffee'
 
 prefix = 'jlTether'
-optionsToEval = ['constraints'] # these tether options aren't mere strings
+optionsToEval = ['constraints', 'enabled'] # these tether options aren't mere strings
 
 KEY = {
     ESC: 27,
