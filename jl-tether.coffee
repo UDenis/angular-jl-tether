@@ -43,7 +43,13 @@ jlTetherDire = ['$timeout', ($timeout) ->
             for own key, value of evaledOptions
                 tetherOptions[key] = value
 
+        # the default element will be element[0]
+        if not tetherOptions.element?
+            tetherOptions.element = element[0]
+
+
         targetElement = angular.element(tetherOptions.target);
+        dropElement = angular.element(tetherOptions.element);
         jlTetherController.targetElement = targetElement
 
         element.on 'click.' + prefix, ()=>
@@ -52,13 +58,21 @@ jlTetherDire = ['$timeout', ($timeout) ->
         targetElement.on 'click.' + prefix, ()=>
             jlTetherController.open()
 
-        targetElement.on 'keydown.' + prefix, (e)=>
+        onKeyDown = (e)=>
             jlTetherController.open()
             switch e.which
                 when KEY.ESC then jlTetherController.close()
-                when KEY.DOWN then jlTetherController.next()
-                when KEY.UP then jlTetherController.prev()
+                when KEY.DOWN
+                    jlTetherController.next()
+                    e.preventDefault()
+                when KEY.UP
+                    jlTetherController.prev()
+                    e.preventDefault()
                 when KEY.ENTER then jlTetherController.onSselectOption()
+
+        targetElement.on 'keydown.' + prefix, onKeyDown
+
+        dropElement.on 'keydown.' + prefix, onKeyDown
 
         angular.element(document).on 'click.' + prefix, (e)=>
             if (e.target != targetElement[0])
@@ -67,13 +81,10 @@ jlTetherDire = ['$timeout', ($timeout) ->
         scope.$on '$destroy', ()->
             jlTetherController.close()
             targetElement.off(prefix)
+            dropElement.off(prefix)
             angular.element(document).off(prefix)
             tetherHandle?.destroy()
 
-
-        # the default element will be element[0]
-        if not tetherOptions.element?
-            tetherOptions.element = element[0]
 
         $timeout () ->
             tetherHandle = new Tether tetherOptions
@@ -86,7 +97,7 @@ jlTetherDire = ['$timeout', ($timeout) ->
 
 
 
-    controller: ['$element',(element)->
+    controller: ['$element', (element)->
         options = [];
         currentIndex = -1;
 
@@ -114,7 +125,7 @@ jlTetherDire = ['$timeout', ($timeout) ->
 
         @removeOption = (o) ->
             index = options.indexOf(o)
-            if (index>-1)
+            if (index > -1)
                 options.splice(index, 1)
 
         @selectOption = (o) ->
@@ -147,4 +158,4 @@ jlTetherDire = ['$timeout', ($timeout) ->
 
 module.exports = angular.module 'jlTether', []
 .directive prefix, jlTetherDire
-.directive prefix+'Option', ()->TetherOption
+.directive prefix + 'Option', ()-> TetherOption

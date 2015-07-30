@@ -92,7 +92,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return {
 	      restrict: 'A',
 	      link: function(scope, element, attrs, cntrs) {
-	        var evaledOptions, jlTetherController, key, optionKey, strippedKey, targetElement, tetherOptions, value;
+	        var dropElement, evaledOptions, jlTetherController, key, onKeyDown, optionKey, strippedKey, targetElement, tetherOptions, value;
 	        jlTetherController = cntrs;
 	        tetherOptions = {
 	          classPrefix: 'drop'
@@ -119,7 +119,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	            tetherOptions[key] = value;
 	          }
 	        }
+	        if (tetherOptions.element == null) {
+	          tetherOptions.element = element[0];
+	        }
 	        targetElement = angular.element(tetherOptions.target);
+	        dropElement = angular.element(tetherOptions.element);
 	        jlTetherController.targetElement = targetElement;
 	        element.on('click.' + prefix, (function(_this) {
 	          return function() {
@@ -131,21 +135,25 @@ return /******/ (function(modules) { // webpackBootstrap
 	            return jlTetherController.open();
 	          };
 	        })(this));
-	        targetElement.on('keydown.' + prefix, (function(_this) {
+	        onKeyDown = (function(_this) {
 	          return function(e) {
 	            jlTetherController.open();
 	            switch (e.which) {
 	              case KEY.ESC:
 	                return jlTetherController.close();
 	              case KEY.DOWN:
-	                return jlTetherController.next();
+	                jlTetherController.next();
+	                return e.preventDefault();
 	              case KEY.UP:
-	                return jlTetherController.prev();
+	                jlTetherController.prev();
+	                return e.preventDefault();
 	              case KEY.ENTER:
 	                return jlTetherController.onSselectOption();
 	            }
 	          };
-	        })(this));
+	        })(this);
+	        targetElement.on('keydown.' + prefix, onKeyDown);
+	        dropElement.on('keydown.' + prefix, onKeyDown);
 	        angular.element(document).on('click.' + prefix, (function(_this) {
 	          return function(e) {
 	            if (e.target !== targetElement[0]) {
@@ -156,12 +164,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        scope.$on('$destroy', function() {
 	          jlTetherController.close();
 	          targetElement.off(prefix);
+	          dropElement.off(prefix);
 	          angular.element(document).off(prefix);
 	          return typeof tetherHandle !== "undefined" && tetherHandle !== null ? tetherHandle.destroy() : void 0;
 	        });
-	        if (tetherOptions.element == null) {
-	          tetherOptions.element = element[0];
-	        }
 	        return $timeout(function() {
 	          var tetherHandle;
 	          tetherHandle = new Tether(tetherOptions);
@@ -1983,7 +1989,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	  controller: [
 	    '$scope', '$element', '$attrs', '$parse', '$timeout', function($scope, $element, $attrs, $parse, $timeout) {
 	      this.select = function() {
-	        return $element.addClass(cssClass);
+	        $element.addClass(cssClass);
+	        $element.prop('tabindex', -1);
+	        return $element.focus();
 	      };
 	      this.unSelect = function() {
 	        return $element.removeClass(cssClass);

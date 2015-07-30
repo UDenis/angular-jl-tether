@@ -6,6 +6,8 @@ module.exports = {
     controller:['$scope','$element','$attrs', '$parse', '$timeout', ($scope, $element, $attrs, $parse, $timeout)->
         @select = () ->
             $element.addClass(cssClass)
+            $element.prop('tabindex', -1);
+            $element.focus();
         @unSelect = ()->
             $element.removeClass(cssClass)
 
